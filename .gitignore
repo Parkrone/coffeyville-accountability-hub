@@ -1,0 +1,11 @@
+# build output
+dist/
+.astro/
+node_modules/
+
+# keystatic
+.keystatic
+
+# OS metadata
+.DS_Store
+Thumbs.db

@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const recordEntries = await getCollection('records');
+  return recordEntries.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout title={`${entry.data.trackingId}: ${entry.data.title}`}>
+  <div class="max-w-3xl mx-auto py-6">
+    <a href="/coffeyville-accountability-hub/records" class="text-xs text-slate-400 hover:text-white transition-colors mb-4 inline-block">&larr; Back to Records Archive</a>
+    
+    <div class="flex items-center justify-between mb-2">
+      <span class="font-mono text-xs text-red-400 font-bold">{entry.data.trackingId}</span>
+      <span class="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded text-xs font-medium">{entry.data.status}</span>
+    </div>
+
+    <h1 class="text-3xl font-extrabold text-white mb-2">{entry.data.title}</h1>
+    <div class="text-xs text-slate-400 mb-6">Target Agency: <strong class="text-slate-200">{entry.data.agency}</strong> • Requested: {entry.data.requestDate.toLocaleDateString()}</div>
+
+    <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 mb-8">
+      <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Key Findings Summary</h3>
+      <p class="text-sm text-slate-200 leading-relaxed">{entry.data.keyFindingsSummary}</p>
+      {entry.data.documentPdfUrl && (
+        <div class="mt-4 pt-3 border-t border-slate-800">
+          <a href={entry.data.documentPdfUrl} target="_blank" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded transition-colors">
+            📄 Download Official Document (PDF)
+          </a>
+        </div>
+      )}
+    </div>
+
+    <div class="prose prose-invert max-w-none text-slate-200 leading-relaxed">
+      <Content />
+    </div>
+  </div>
+</BaseLayout>

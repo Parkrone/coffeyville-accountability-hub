@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const videoEntries = await getCollection('videos');
+  return videoEntries.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout title={`Day ${entry.data.dayNumber}: ${entry.data.title}`}>
+  <div class="max-w-3xl mx-auto py-6">
+    <a href="/coffeyville-accountability-hub/videos" class="text-xs text-slate-400 hover:text-white transition-colors mb-4 inline-block">&larr; Back to Video Archive</a>
+    
+    <div class="flex items-center gap-2 text-xs font-semibold text-red-400 mb-2">
+      <span>Day {entry.data.dayNumber}</span>
+      <span>•</span>
+      <span class="text-slate-400">{entry.data.publishDate.toLocaleDateString()}</span>
+      <span>•</span>
+      <span class="text-slate-400">📍 {entry.data.location}</span>
+    </div>
+
+    <h1 class="text-3xl font-extrabold text-white mb-4">{entry.data.title}</h1>
+    
+    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 text-sm text-slate-300 mb-8">
+      <strong>Summary:</strong> {entry.data.summary}
+    </div>
+
+    <!-- Script Content -->
+    <div class="prose prose-invert max-w-none text-slate-200 border-b border-slate-800 pb-8 mb-8 leading-relaxed">
+      <Content />
+    </div>
+
+    <!-- Cited Sources -->
+    {entry.data.sources && entry.data.sources.length > 0 && (
+      <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+        <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3">Cited Sources & Verification</h3>
+        <ul class="space-y-2 text-xs">
+          {entry.data.sources.map((src) => (
+            <li class="flex items-center gap-2">
+              <span class="text-red-400">🔗</span>
+              <a href={src.url} target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-white underline">
+                {src.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,20 @@
+---
+---
+<div class="w-full my-6 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+  <div id="search" class="w-full"></div>
+</div>
+
+<link href="/coffeyville-accountability-hub/pagefind/pagefind-ui.css" rel="stylesheet" />
+<script src="/coffeyville-accountability-hub/pagefind/pagefind-ui.js" is:inline></script>
+<script is:inline>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.PagefindUI) {
+      new PagefindUI({
+        element: "#search",
+        showSubResults: true,
+        showImages: false,
+        placeholder: "Search daily video transcripts, KORA documents, endangered species data...",
+      });
+    }
+  });
+</script>

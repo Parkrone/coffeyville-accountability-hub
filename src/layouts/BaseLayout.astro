@@ -1,0 +1,28 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Public research, daily video logs, KORA records, and accountability tracker for Coffeyville, Kansas." } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} | Coffeyville Accountability Hub</title>
+  <meta name="description" content={description}>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+  <Header />
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
+    <slot />
+  </main>
+  <Footer />
+</body>
+</html>

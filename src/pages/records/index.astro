@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const records = await getCollection('records');
+---
+
+<BaseLayout title="Investigative KORA Records">
+  <div class="py-6 border-b border-slate-800">
+    <h1 class="text-3xl font-extrabold text-white">Public Open Records (KORA / FOIA)</h1>
+    <p class="text-slate-400 mt-1">Official agency documents, emails, and power grid filings regarding data centers in Coffeyville.</p>
+  </div>
+
+  <div class="space-y-4 my-8">
+    {records.map((record) => (
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+          <span class="font-mono text-xs text-red-400 font-bold">{record.data.trackingId}</span>
+          <span class="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded text-xs w-fit font-medium">{record.data.status}</span>
+        </div>
+        <a href={`/coffeyville-accountability-hub/records/${record.slug}`} class="text-xl font-bold text-white hover:text-red-400 transition-colors block">
+          {record.data.title}
+        </a>
+        <div class="text-xs text-slate-400 mt-1">Target Agency: <strong class="text-slate-300">{record.data.agency}</strong> • Requested: {record.data.requestDate.toLocaleDateString()}</div>
+        <p class="text-sm text-slate-300 mt-3">{record.data.keyFindingsSummary}</p>
+        <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+          <div class="flex gap-2">
+            {record.data.tags.map(t => <span class="bg-slate-950 px-2 py-0.5 rounded text-[10px] text-slate-400">#{t}</span>)}
+          </div>
+          <a href={`/coffeyville-accountability-hub/records/${record.slug}`} class="text-red-400 font-semibold hover:underline">Read Full Analysis &rarr;</a>
+        </div>
+      </div>
+    ))}
+  </div>
+</BaseLayout>

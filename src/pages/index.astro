@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import { getCollection } from 'astro:content';
+
+const videos = (await getCollection('videos')).sort((a, b) => b.data.dayNumber - a.data.dayNumber);
+const records = await getCollection('records');
+const timeline = (await getCollection('timeline')).sort((a, b) => b.data.eventDate.getTime() - a.data.eventDate.getTime());
+---
+
+<BaseLayout title="Home">
+  <!-- Hero Section -->
+  <div class="py-8 border-b border-slate-800">
+    <span class="inline-block bg-red-900/60 text-red-300 text-xs px-3 py-1 rounded-full font-semibold mb-3 border border-red-700/50">
+      Public Research & Civic Accountability
+    </span>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+      No Data Centers in Coffeyville
+    </h1>
+    <p class="text-slate-400 mt-2 text-base sm:text-lg max-w-3xl">
+      An open-access investigative portal compiling daily video logs, Kansas Open Records Act (KORA) findings, power grid studies, and municipal accountability tracking.
+    </p>
+  </div>
+
+  <!-- Full-Text Search Engine -->
+  <SearchBar />
+
+  <!-- Metrics Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8">
+    <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+      <div class="text-xs text-slate-400 uppercase font-semibold">Daily Video Logs</div>
+      <div class="text-3xl font-bold text-white mt-1">{videos.length} Days</div>
+      <div class="text-xs text-slate-400 mt-1">Exposing AI data centers daily</div>
+    </div>
+    <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+      <div class="text-xs text-slate-400 uppercase font-semibold">KORA Public Records</div>
+      <div class="text-3xl font-bold text-white mt-1">{records.length} Documents</div>
+      <div class="text-xs text-slate-400 mt-1">City & utility filings on record</div>
+    </div>
+    <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+      <div class="text-xs text-slate-400 uppercase font-semibold">Accountability Milestones</div>
+      <div class="text-3xl font-bold text-white mt-1">{timeline.length} Events</div>
+      <div class="text-xs text-slate-400 mt-1">Tracking demands vs. city actions</div>
+    </div>
+  </div>
+
+  <!-- Latest Content Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
+    <!-- Latest Videos -->
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Latest Daily Videos</h2>
+        <a href="/coffeyville-accountability-hub/videos" class="text-xs text-red-400 hover:text-red-300 font-semibold">View all &rarr;</a>
+      </div>
+      <div class="space-y-4">
+        {videos.slice(0, 3).map((video) => (
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+            <div class="flex items-center gap-2 text-xs text-red-400 font-semibold mb-1">
+              <span>Day {video.data.dayNumber}</span>
+              <span>•</span>
+              <span class="text-slate-400">{video.data.publishDate.toLocaleDateString()}</span>
+            </div>
+            <a href={`/coffeyville-accountability-hub/videos/${video.slug}`} class="font-bold text-white hover:text-red-400 transition-colors text-base block">
+              {video.data.title}
+            </a>
+            <p class="text-xs text-slate-400 mt-2 line-clamp-2">{video.data.summary}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Public Records Summary -->
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Investigative KORA Records</h2>
+        <a href="/coffeyville-accountability-hub/records" class="text-xs text-red-400 hover:text-red-300 font-semibold">View all &rarr;</a>
+      </div>
+      <div class="space-y-4">
+        {records.slice(0, 3).map((record) => (
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span class="font-mono text-slate-300 font-semibold">{record.data.trackingId}</span>
+              <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px]">{record.data.status}</span>
+            </div>
+            <a href={`/coffeyville-accountability-hub/records/${record.slug}`} class="font-bold text-white hover:text-red-400 transition-colors text-base block">
+              {record.data.title}
+            </a>
+            <p class="text-xs text-slate-400 mt-2 line-clamp-2">{record.data.keyFindingsSummary}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
